@@ -1,0 +1,44 @@
+spring:
+  config:
+    import: vault://
+  application:
+    name: event
+  cloud:
+    vault:
+      enable: true
+      host: ${VAULT_HOST:localhost}
+      application-name: event
+      port: 8200
+      scheme: http
+      authentication: KUBERNETES
+      kubernetes:
+        role: devweb-app
+      kv:
+        enabled: true
+        backend: kv
+        default-context:
+      mongodb:
+       enabled: true
+       role: ${VAULT_MONGO_ROLE:my-role}
+       backend: ${VAULT_MONGO_BACKEND:mongodb}
+       username-property: mongodb.username
+       password-property: mongodb.password
+      generic:
+        enable: false
+mongo:
+  connectionString: ${MONGO_DB_URL:mongodb://localhost:27017}
+  databaseName: event
+#  /event?authSource=admin&replicaSet=replset&socketTimeoutMS=360000&connectTimeout=360000&maxIdleMS=150000
+
+
+#spring.cloud.vault.mongodb.enabled=true
+#spring.cloud.vault.mongodb.role=readonly
+#spring.cloud.vault.mongodb.backend=mongodb
+#spring.cloud.vault.mongodb.username-property=spring.data.mongodb.username
+#spring.cloud.vault.mongodb.password-property=spring.data.mongodb.password
+
+#spring.data.mongodb.host=localhost
+#spring.data.mongodb.port=27017
+#spring.data.mongodb.database=mongo
+#spring.data.mongodb.username=root
+#spring.data.mongodb.password=example

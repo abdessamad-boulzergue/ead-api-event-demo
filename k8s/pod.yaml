@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: test
+  name: api-eventv1
+  labels:
+    app: api-event
+spec:
+  serviceAccountName: test-cloud
+  automountServiceAccountToken: true
+  containers:
+  - name: private-reg-container
+    image: abdosblz/api-event:v1.0.6
+    volumeMounts:
+    - name: dns-config-volume
+      mountPath: /etc/resolv.conf
+      subPath: resolv.conf
+    command: ["java"]
+    args: ["-Dspring.profiles.active=kube","-jar","/app.jar"]
+    env:
+    - name: VAULT_HOST
+      value: "172.18.208.1"
+    - name: SERVER_PORT
+      value: "8080"
+    - name: MONGO_DB_URL
+      value: "mongodb://172.18.208.1:27017/event?tls=false&authSource=admin&replicaSet=replset&socketTimeoutMS=360000&connectTimeout=360000&maxIdleMS=150000"
+  volumes:
+  - name: dns-config-volume
+    configMap:
+      name: dns-config
+  imagePullSecrets:
+  - name: regcred
