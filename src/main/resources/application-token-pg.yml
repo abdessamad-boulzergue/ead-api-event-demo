@@ -1,10 +1,21 @@
+server:
+  port: 8083
 spring:
+  security:
+    oauth2:
+      resource-server:
+        jwt:
+          jwk-set-uri: ${JWK_SET_URI}
+  kafka:
+    bootstrap-servers: localhost:9092
+  datasource:
+    url: jdbc:postgresql://localhost:5432/abdos?currentSchema=08453_apinotif_pxc&sslmode=disable
+    hikari:
+      schema: 08453_apinotif_pxc
   config:
     import: vault://
   application:
     name: event
-  kafka:
-    bootstrap-servers: localhost:9094
   cloud:
     vault:
       enable: true
@@ -13,13 +24,24 @@ spring:
       port: 8200
       scheme: http
       authentication: TOKEN
-      token: ${VAULT_TOKEN:}
+      token: ${VAULT_TOKEN}
+      config:
+        lifecycle:
+          enabled: true
+          min-renewal: 1m
+          expiry-threshold: 2m
       mongodb:
+        enabled: true
+        role: my-role
+        backend: mongodb
+        username-property: spring.data.mongodb.username
+        password-property: spring.data.mongodb.password
+      database:
        enabled: true
-       role: ${VAULT_MONGO_ROLE:my-role}
-       backend: ${VAULT_MONGO_BACKEND:mongodb}
-       username-property: mongodb.username
-       password-property: mongodb.password
+       role: ${VAULT_PG_ROLE}
+       backend: ${VAULT_PG_BACKEND}
+       username-property: spring.datasource.username
+       password-property: spring.datasource.password
       generic:
         enable: false
 orti:
@@ -33,7 +55,7 @@ orti:
         producer:
           batch-size: 1024000
           organization: "fr"
-          delivery-timeout-ms: 30000
+          delivery-timeout-ms: 31001
           nature: "business"
           version: "1"
           sk: 1
@@ -46,6 +68,13 @@ mongo:
   adminDB: admin
 #  /event?authSource=admin&replicaSet=replset&socketTimeoutMS=360000&connectTimeout=360000&maxIdleMS=150000
 
+logging:
+  level:
+    root: INFO
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security.web.FilterChainProxy: DEBUG
 
 #spring.cloud.vault.mongodb.enabled=true
 #spring.cloud.vault.mongodb.role=readonly

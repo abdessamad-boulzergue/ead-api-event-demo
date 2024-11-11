@@ -1,4 +1,4 @@
-package com.eda.api.event.service;
+package com.eda.api.event.db.mongo.model;
 
 public class EventEntity {
 

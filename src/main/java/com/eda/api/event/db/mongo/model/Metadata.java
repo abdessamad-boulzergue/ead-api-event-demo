@@ -1,4 +1,4 @@
-package com.eda.api.event.db.config;
+package com.eda.api.event.db.mongo.model;
 
 public class Metadata {
     private Integer totalElements;

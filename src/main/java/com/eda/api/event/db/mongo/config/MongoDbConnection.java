@@ -1,4 +1,4 @@
-package com.eda.api.event.db.config;
+package com.eda.api.event.db.mongo.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -6,9 +6,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MongoDbConnection {
 
-    @Value("${mongodb.username:#{null}}")
+    @Value("${spring.data.mongodb.username:#{null}}")
     private String username;
-    @Value("${mongodb.password:#{null}}")
+    @Value("${spring.data.mongodb.password:#{null}}")
     private String password;
 
     public String getUsername() {

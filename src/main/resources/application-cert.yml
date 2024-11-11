@@ -3,17 +3,22 @@ spring:
     import: vault://
   application:
     name: event
-  kafka:
-    bootstrap-servers: localhost:9094
   cloud:
     vault:
       enable: true
       host: ${VAULT_HOST:localhost}
       application-name: event
       port: 8200
-      scheme: http
-      authentication: TOKEN
-      token: ${VAULT_TOKEN:}
+      scheme: https
+      authentication: CERT
+      ssl:
+        key-store: classpath:keystore/client-cert.jks
+        key-store-password: changeit
+        cert-auth-path: cert
+      kv:
+        enabled: true
+        backend: kv
+        default-context:
       mongodb:
        enabled: true
        role: ${VAULT_MONGO_ROLE:my-role}
@@ -22,24 +27,6 @@ spring:
        password-property: mongodb.password
       generic:
         enable: false
-orti:
-  enabled: true
-  environment: DEV
-  applicative-system: APP_SA
-  applicative-code: ORG@1234
-  eda:
-    topics:
-      topic-name-v1:
-        producer:
-          batch-size: 1024000
-          organization: "fr"
-          delivery-timeout-ms: 30000
-          nature: "business"
-          version: "1"
-          sk: 1
-          acks: 1
-          retries: 5
-          compression-type: "none"
 mongo:
   connectionString: ${MONGO_DB_URL:mongodb://localhost:27017}
   databaseName: event

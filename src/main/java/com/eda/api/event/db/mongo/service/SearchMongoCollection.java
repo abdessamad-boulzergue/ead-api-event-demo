@@ -1,26 +1,32 @@
-package com.eda.api.event.service;
+package com.eda.api.event.db.mongo.service;
 
-import com.eda.api.event.db.config.EventEntitySearchView;
+import com.eda.api.event.db.mapper.LogEventMapper;
+import com.eda.api.event.db.mongo.model.EventEntity;
+import com.eda.api.event.db.mongo.model.EventEntitySearchView;
+import com.eda.api.event.domain.model.LogEvent;
+import com.eda.api.event.domain.port.EventDataSource;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Collation;
 import com.mongodb.client.model.CollationStrength;
 import com.mongodb.client.model.Facet;
 import org.bson.conversions.Bson;
-import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 
 import static com.mongodb.client.model.Aggregates.*;
 import static com.mongodb.client.model.Sorts.descending;
 
-@Service
-public class SearchMongoCollection {
+public class SearchMongoCollection implements EventDataSource {
 
     private final MongoCollection<EventEntity> eventEntityMongoCollection;
+    private final LogEventMapper logEventMapper;
 
-    public SearchMongoCollection(MongoCollection<EventEntity> eventEntityMongoCollection) {
+    public SearchMongoCollection(MongoCollection<EventEntity> eventEntityMongoCollection, LogEventMapper logEventMapper) {
         this.eventEntityMongoCollection = eventEntityMongoCollection;
+        this.logEventMapper = logEventMapper;
     }
 
     public EventEntitySearchView search(){
@@ -43,5 +49,11 @@ public class SearchMongoCollection {
                         limit(limit)
                         )
         );
+    }
+
+    @Override
+    public List<LogEvent> find(LocalDateTime start, LocalDateTime end) {
+        var events = search();
+        return logEventMapper.entitiesToLogEvents(events.getData());
     }
 }

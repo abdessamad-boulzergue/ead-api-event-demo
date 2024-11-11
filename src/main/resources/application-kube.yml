@@ -28,6 +28,7 @@ spring:
 mongo:
   connectionString: ${MONGO_DB_URL:mongodb://localhost:27017}
   databaseName: event
+  adminDB: admin
 #  /event?authSource=admin&replicaSet=replset&socketTimeoutMS=360000&connectTimeout=360000&maxIdleMS=150000
 
 

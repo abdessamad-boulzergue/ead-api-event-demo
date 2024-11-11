@@ -1,6 +1,6 @@
-package com.eda.api.event.db.config;
+package com.eda.api.event.db.mongo.model;
 
-import com.eda.api.event.service.EventEntity;
+import com.eda.api.event.db.mongo.model.EventEntity;
 
 import java.util.List;
 

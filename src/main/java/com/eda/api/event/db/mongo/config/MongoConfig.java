@@ -1,6 +1,6 @@
-package com.eda.api.event.db.config;
+package com.eda.api.event.db.mongo.config;
 
-import com.eda.api.event.service.EventEntity;
+import com.eda.api.event.db.mongo.model.EventEntity;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoCredential;
@@ -21,12 +21,12 @@ import java.util.Objects;
 @Configuration
 public class MongoConfig {
 
-    private static final String MONGO_DB_NAME = "event";
-    private static final String ADMIN_DB = "admin";
-    @Value("${mongo.connectionString:mongodb://localhost:27017}")
+    @Value("${mongo.adminDB:admin}")
+    private  String adminDb;
+    @Value("${mongo.connectionString}")
     private String connectionString;
 
-    @Value("${mongo.databaseName:event}")
+    @Value("${mongo.databaseName}")
     private String dbName;
 
     @Autowired
@@ -46,7 +46,7 @@ public class MongoConfig {
 		System.out.println(vaultConnection);
         if(Objects.nonNull(vaultConnection.getUsername()) && Objects.nonNull(vaultConnection.getPassword())){
             settingBuilder = settingBuilder.credential(MongoCredential.
-                    createCredential(vaultConnection.getUsername(), ADMIN_DB,vaultConnection.getPassword().toCharArray()));
+                    createCredential(vaultConnection.getUsername(), adminDb,vaultConnection.getPassword().toCharArray()));
         }
 
         MongoClientSettings clientSettings = settingBuilder.build();
