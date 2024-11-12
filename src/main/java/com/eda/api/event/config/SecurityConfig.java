@@ -10,22 +10,31 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidator;
 import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    @Value("${spring.security.oauth2.resource-server.jwt.jwk-set-uri}")
+    @Value("${spring.security.oauth2.resource-server.jwt.jwk-set-uri:}")
     private String jwkSetUri;
+    @Value("${spring.security.oauth2.resource-server.jwt.audience}")
+    private String audience;
+
+    @Value("${jwt.secret:}")
+    private String jwtSecret;
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -49,9 +58,35 @@ public class SecurityConfig {
 
     @Bean
     public JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withJwkSetUri(jwkSetUri)
-                .jwsAlgorithm(SignatureAlgorithm.RS512) // Make sure this matches your token
-                .build();
+
+        NimbusJwtDecoder jwtDecoder = null;
+
+        if(Objects.nonNull(jwkSetUri) && !jwkSetUri.isBlank()){
+            jwtDecoder = NimbusJwtDecoder.withJwkSetUri(jwkSetUri)
+                    .jwsAlgorithm(SignatureAlgorithm.RS512) // Make sure this matches your token
+                    .build();
+        }else {
+            byte[] secretKeyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
+            SecretKeySpec secretKeySpec = new SecretKeySpec(secretKeyBytes, "HmacSHA256");
+            jwtDecoder = NimbusJwtDecoder.withSecretKey(secretKeySpec).build();
+        }
+
+
+        // Create validators
+        OAuth2TokenValidator<Jwt> audienceValidator = new JwtClaimValidator<List<String>>(
+                "aud",
+                aud -> aud != null && aud.contains(audience)
+        );
+
+        OAuth2TokenValidator<Jwt> defaultValidators = JwtValidators.createDefault();
+        OAuth2TokenValidator<Jwt> validator = new DelegatingOAuth2TokenValidator<>(
+                defaultValidators,
+                audienceValidator
+        );
+
+        jwtDecoder.setJwtValidator(validator);
+
+        return jwtDecoder;
     }
 
     private Converter<Jwt, AbstractAuthenticationToken>  jwtAuthenticationConverter() {
