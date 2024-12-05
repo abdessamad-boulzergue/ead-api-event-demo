@@ -62,4 +62,8 @@ public class MongoConfig {
     public MongoCollection<EventEntity>  eventEntityMongoCollection(){
         return mongoDatabase().getCollection("events",EventEntity.class);
     }
+
+    public String getDbName() {
+        return dbName;
+    }
 }

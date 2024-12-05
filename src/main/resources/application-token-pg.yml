@@ -6,6 +6,7 @@ spring:
       resource-server:
         jwt:
           jwk-set-uri: ${JWK_SET_URI}
+          audience: eda
   kafka:
     bootstrap-servers: localhost:9092
   datasource:
