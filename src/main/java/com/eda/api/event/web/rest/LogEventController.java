@@ -27,4 +27,10 @@ public class LogEventController {
     public List<LogEvent> test(){
        return searchEvent.search(LocalDateTime.now().minusDays(1),LocalDateTime.now());
     }
+
+    @GetMapping("/owner")
+    public List<LogEvent> owner(){
+        return searchEvent.search(LocalDateTime.now().minusDays(1),LocalDateTime.now());
+    }
+
 }

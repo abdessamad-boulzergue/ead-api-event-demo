@@ -1,0 +1,98 @@
+server:
+  port: 8443
+  ssl:
+    enabled: true
+    ssl.key-store-type: PKCS12
+    key-store: classpath:keystore/keystore.p12
+    key-store-password: changeit
+    key-alias: baeldung
+    protocol: TLS
+    enabled-protocols: TLSv1.2
+spring:
+  security:
+    oauth2:
+      resource-server:
+        jwt:
+          jwk-set-uri: ${JWK_SET_URI}
+          audience: eda
+  kafka:
+    bootstrap-servers: localhost:9092
+  datasource:
+    url: jdbc:postgresql://localhost:5432/abdos?currentSchema=08453_apinotif_pxc&sslmode=disable
+    hikari:
+      schema: 08453_apinotif_pxc
+  config:
+    import: vault://
+  application:
+    name: event
+  cloud:
+    vault:
+      enable: true
+      host: ${VAULT_HOST:localhost}
+      application-name: event
+      port: 8200
+      scheme: http
+      authentication: TOKEN
+      token: ${VAULT_TOKEN}
+      config:
+        lifecycle:
+          enabled: true
+          min-renewal: 1m
+          expiry-threshold: 2m
+      mongodb:
+        enabled: true
+        role: my-role
+        backend: mongodb
+        username-property: spring.data.mongodb.username
+        password-property: spring.data.mongodb.password
+      database:
+       enabled: true
+       role: ${VAULT_PG_ROLE}
+       backend: ${VAULT_PG_BACKEND}
+       username-property: spring.datasource.username
+       password-property: spring.datasource.password
+      generic:
+        enable: false
+orti:
+  enabled: true
+  environment: DEV
+  applicative-system: APP_SA
+  applicative-code: ORG@1234
+  eda:
+    topics:
+      topic-name-v1:
+        producer:
+          batch-size: 1024000
+          organization: "fr"
+          delivery-timeout-ms: 31001
+          nature: "business"
+          version: "1"
+          sk: 1
+          acks: 1
+          retries: 5
+          compression-type: "none"
+mongo:
+  connectionString: ${MONGO_DB_URL:mongodb://localhost:27017}
+  databaseName: event
+  adminDB: admin
+#  /event?authSource=admin&replicaSet=replset&socketTimeoutMS=360000&connectTimeout=360000&maxIdleMS=150000
+
+logging:
+  level:
+    root: INFO
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.security.web.FilterChainProxy: DEBUG
+
+#spring.cloud.vault.mongodb.enabled=true
+#spring.cloud.vault.mongodb.role=readonly
+#spring.cloud.vault.mongodb.backend=mongodb
+#spring.cloud.vault.mongodb.username-property=spring.data.mongodb.username
+#spring.cloud.vault.mongodb.password-property=spring.data.mongodb.password
+
+#spring.data.mongodb.host=localhost
+#spring.data.mongodb.port=27017
+#spring.data.mongodb.database=mongo
+#spring.data.mongodb.username=root
+#spring.data.mongodb.password=example
