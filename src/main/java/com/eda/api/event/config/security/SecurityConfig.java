@@ -1,24 +1,14 @@
 package com.eda.api.event.config.security;
 
-import com.eda.api.event.config.security.expressions.CustomMethodSecurityExpressionRoot;
-import com.eda.api.event.config.security.expressions.CustomPermissionEvaluator;
-import com.eda.api.event.config.security.expressions.CustomSecurityExpression;
-import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
-import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
-import org.springframework.security.access.expression.method.MethodSecurityExpressionOperations;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
@@ -34,10 +24,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Configuration
-@EnableMethodSecurity(securedEnabled = true)
+@EnableMethodSecurity
 public class SecurityConfig {
 
-        @Value("${spring.security.oauth2.resource-server.jwt.jwk-set-uri:}")
+    @Value("${spring.security.oauth2.resource-server.jwt.jwk-set-uri:}")
     private String jwkSetUri;
     @Value("${spring.security.oauth2.resource-server.jwt.audience}")
     private String audience;
@@ -54,8 +44,8 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/.well-known/jwks.json").permitAll(); // Allow JWKS endpoint
-                    auth.anyRequest().authenticated(); // Require authentication for all others endpoints
+                    auth.requestMatchers("/.well-known/jwks.json").permitAll();
+                    auth.anyRequest().authenticated();
                 })
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt
@@ -88,13 +78,10 @@ public class SecurityConfig {
                 aud -> aud != null && aud.contains(audience)
         );
 
-        OAuth2TokenValidator<Jwt> defaultValidators = JwtValidators.createDefault();
-        OAuth2TokenValidator<Jwt> validator = new DelegatingOAuth2TokenValidator<>(
-                defaultValidators,
+        jwtDecoder.setJwtValidator(new DelegatingOAuth2TokenValidator<>(
+                JwtValidators.createDefault(),
                 audienceValidator
-        );
-
-        jwtDecoder.setJwtValidator(validator);
+        ));
 
         return jwtDecoder;
     }
