@@ -1,9 +1,9 @@
 package com.eda.api.event.db.mongo.service;
 
+import com.eda.api.event.avro.LogEvent;
 import com.eda.api.event.db.mapper.LogEventMapper;
 import com.eda.api.event.db.mongo.model.EventEntity;
 import com.eda.api.event.db.mongo.model.EventEntitySearchView;
-import com.eda.api.event.domain.model.LogEvent;
 import com.eda.api.event.domain.port.EventDataSource;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Aggregates;

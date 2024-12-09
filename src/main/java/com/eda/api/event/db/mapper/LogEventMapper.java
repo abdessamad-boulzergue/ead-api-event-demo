@@ -1,7 +1,7 @@
 package com.eda.api.event.db.mapper;
 
+import com.eda.api.event.avro.LogEvent;
 import com.eda.api.event.db.mongo.model.EventEntity;
-import com.eda.api.event.domain.model.LogEvent;
 import org.mapstruct.Mapper;
 import org.springframework.stereotype.Component;
 

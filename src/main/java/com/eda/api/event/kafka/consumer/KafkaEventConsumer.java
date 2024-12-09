@@ -1,6 +1,6 @@
 package com.eda.api.event.kafka.consumer;
 
-import com.eda.api.event.domain.model.LogEvent;
+import com.eda.api.event.avro.LogEvent;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;

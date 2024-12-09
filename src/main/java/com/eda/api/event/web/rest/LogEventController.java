@@ -1,6 +1,6 @@
 package com.eda.api.event.web.rest;
 
-import com.eda.api.event.domain.model.LogEvent;
+import com.eda.api.event.avro.LogEvent;
 import com.eda.api.event.domain.usecase.SearchEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;

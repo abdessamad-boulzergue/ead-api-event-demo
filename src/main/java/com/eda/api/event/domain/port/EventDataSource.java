@@ -1,6 +1,7 @@
 package com.eda.api.event.domain.port;
 
-import com.eda.api.event.domain.model.LogEvent;
+
+import com.eda.api.event.avro.LogEvent;
 
 import java.time.LocalDateTime;
 import java.util.List;

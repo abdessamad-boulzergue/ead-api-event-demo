@@ -1,0 +1,17 @@
+{
+  "type": "record",
+  "name": "LogEvent",
+  "namespace": "com.eda.api.event.avro",
+  "fields": [
+    {
+      "name": "eventId",
+      "type": ["null","string"],
+      "default": null
+    },
+    {
+      "name": "eventType",
+      "type": ["null","string"],
+      "default": null
+    }
+  ]
+}

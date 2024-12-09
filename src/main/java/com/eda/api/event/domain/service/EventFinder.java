@@ -1,6 +1,6 @@
 package com.eda.api.event.domain.service;
 
-import com.eda.api.event.domain.model.LogEvent;
+import com.eda.api.event.avro.LogEvent;
 import com.eda.api.event.domain.port.EventDataSource;
 import com.eda.api.event.domain.usecase.SearchEvent;
 
