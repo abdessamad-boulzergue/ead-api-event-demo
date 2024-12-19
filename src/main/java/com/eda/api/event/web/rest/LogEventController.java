@@ -21,17 +21,17 @@ public class LogEventController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('scope:read')")
-    public List<LogEvent> getEvents(){
-       return searchEvent.search(LocalDateTime.now().minusDays(1),LocalDateTime.now());
+    public Mono<List<LogEvent>> getEvents(){
+       return Mono.just(searchEvent.search(LocalDateTime.now().minusDays(1),LocalDateTime.now()));
     }
     @GetMapping("/test")
-    public List<LogEvent> test(){
-       return searchEvent.search(LocalDateTime.now().minusDays(1),LocalDateTime.now());
+    public Mono<List<LogEvent>> test(){
+       return Mono.just(searchEvent.search(LocalDateTime.now().minusDays(1),LocalDateTime.now()));
     }
 
     @GetMapping("/owner")
-    public List<LogEvent> owner(){
-        return searchEvent.search(LocalDateTime.now().minusDays(1),LocalDateTime.now());
+    public Mono<List<LogEvent>> owner(){
+        return Mono.just(searchEvent.search(LocalDateTime.now().minusDays(1),LocalDateTime.now()));
     }
 
     @GetMapping("/mono")
